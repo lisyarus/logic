@@ -6,9 +6,18 @@ import Deduction
 
 a = Variable "A"
 b = Variable "B"
-ax1 = Conjunction a b
-ax2 = Implication ax1 a
 
-p = Proof [ax1, ax2] (ModusPonens (Hypothesis ax1) (Hypothesis ax2))
+p = Proof [Conjunction a b] (ModusPonens
+    (ModusPonens
+        (Hypothesis (Conjunction a b))
+        (Axiom (Implication (Conjunction a b) a))
+    )
+    (ModusPonens
+        (ModusPonens
+            (Hypothesis (Conjunction a b))
+            (Axiom (Implication (Conjunction a b) b))
+        )
+        (Axiom (Implication b (Implication a (Conjunction b a))))
+    ))
 
-main = print p
+main = print (deduction p)
