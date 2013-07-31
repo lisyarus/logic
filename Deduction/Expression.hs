@@ -29,18 +29,23 @@ addToLast c (head:tail) = (c:head):tail
 putAnother :: Char -> TokenList -> TokenList
 putAnother c list = "" : (addToLast c list)
 
-splitToTokens :: String -> TokenList
-splitToTokens [] = [""]
-splitToTokens (c:tail) =
-    if (isAlphaNum c) then addToLast c (splitToTokens tail) else
-    if (isSpace c) then ensureHasEmpty (splitToTokens tail) else
-    if (c == '-') then case (splitToTokens tail) of
+splitToTokensImpl :: String -> TokenList
+splitToTokensImpl [] = [""]
+splitToTokensImpl (c:tail) =
+    if (isAlphaNum c) then addToLast c (splitToTokensImpl tail) else
+    if (isSpace c) then ensureHasEmpty (splitToTokensImpl tail) else
+    if (c == '-') then case (splitToTokensImpl tail) of
         ("":">":tail1) -> "":"->":tail1
         "":tail1 -> "":"-":tail1 else
-    if (c == ':') then case (splitToTokens tail) of
+    if (c == ':') then case (splitToTokensImpl tail) of
         ("":"-":tail1) -> "":":-":tail1
         "":tail1 -> "":":":tail1 else
-    putAnother c (ensureHasEmpty (splitToTokens tail))
+    putAnother c (ensureHasEmpty (splitToTokensImpl tail))
+
+splitToTokens string =
+    case splitToTokensImpl string of
+        "":tail -> tail
+        tail -> tail
 
 data ParseState = ParseState Expression TokenList
 
@@ -73,7 +78,6 @@ parseImplication tokenList =
             ParseState expr tail -> ParseState expr tail
 
 parse string = case (splitToTokens string) of
-    "":tokenTail -> stateExpression (parseImplication tokenTail)
     tokenList -> stateExpression (parseImplication tokenList)
 
 data ProofTree =  Axiom Expression
@@ -87,8 +91,8 @@ proofStatement (ModusPonens a ac) =
     let aSt = proofStatement a
         acSt = proofStatement ac in
     case acSt of
-        Implication b c -> if (aSt == b) then c else undefined
-        _ -> undefined
+        Implication b c -> if (aSt == b) then c else error "bad modus ponens"
+        _ -> error "bad modus ponens"
 
 instance Show(ProofTree) where
     show (Axiom ax) = (show ax) ++ " (axiom)"
@@ -107,7 +111,7 @@ instance Show(Proof) where
 
 isAxiom :: Expression -> Bool
 isAxiom (Implication (Implication a1 b1) (Implication (Implication a2 (Implication b2 c1)) (Implication a3 c2))) = (a1 == a2) && (a2 == a3) && (b1 == b2) && (c1 == c2)
-isAxiom (Implication a1 (Implication b1 (Conjunction a2 b2))) = (a1 == a2) && (b1 == a2)
+isAxiom (Implication a1 (Implication b1 (Conjunction a2 b2))) = (a1 == a2) && (b1 == b2)
 isAxiom (Implication (Conjunction a1 b1) ab) = (a1 == ab) || (b1 == ab)
 isAxiom (Implication ab (Disjunction a1 b1)) = (a1 == ab) || (b1 == ab)
 isAxiom (Implication (Implication a1 c1) (Implication (Implication b1 c2) (Implication (Disjunction a2 b2) c3))) = (a1 == a2) && (b1 == b2) && (c1 == c2) && (c2 == c3)
