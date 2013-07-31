@@ -1,5 +1,5 @@
-Deduction: Expression.hs Deduction.hs Main.hs
-	ghc --make Main.hs -o Deduction
+Deduction: Expression.hs Deduction.hs DeductionMain.hs
+	ghc --make DeductionMain.hs -o Deduction
 
 clean:
 	rm *.hi
