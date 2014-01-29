@@ -1,3 +1,5 @@
+all: Deduction Completeness
+
 Deduction: Expression.hs Deduction.hs DeductionMain.hs
 	ghc --make DeductionMain.hs -o Deduction
 
