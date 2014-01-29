@@ -16,9 +16,14 @@ getVariables expr = nub (getVariables' expr)
 data VariableValue = VariableValue String Bool
     deriving(Show)
 
-getVariableValue name varlist =
-    case head varlist of
-        VariableValue name' val -> if name == name' then val else getVariableValue name (tail varlist)
+getVariableValue :: String -> [VariableValue] -> Bool
+getVariableValue name [] = error "Empty variable list"
+getVariableValue name (head : tail) =
+   case head of
+      VariableValue name' value -> if (name == name') then
+         value
+      else
+         getVariableValue name tail
 
 calculate :: Expression -> [VariableValue] -> Bool
 calculate (Variable name) varlist = getVariableValue name varlist
