@@ -12,7 +12,6 @@ data Expression = Variable String
 instance Show(Expression) where
     show (Variable s) = s
     show (Negation e) = "!" ++ (show e)
-    --show (Implication e1@(Implication _ _) e2) = "(" ++ (show e1) ++ ") -> " ++ (show e2)
     show (Implication e1 e2) = "(" ++ (show e1) ++ " -> " ++ (show e2) ++ ")"
     show (Conjunction e1 e2) = "(" ++ (show e1) ++ " & " ++ (show e2) ++ ")"
     show (Disjunction e1 e2) = "(" ++ (show e1) ++ " | " ++ (show e2) ++ ")"
