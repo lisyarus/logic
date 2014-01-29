@@ -101,10 +101,16 @@ getProofTree proof =
    case proof of
       Proof _ tree -> tree
 
+showProof :: ProofTree -> Int -> (String, Int)
+showProof (Axiom ax) index = ((show index) ++ ".  " ++ (show ax) ++ " (axiom)", index + 1)
+showProof (Hypothesis hypo) index = ((show index) ++ ".  " ++ (show hypo) ++ " (hypothesis)", index + 1)
+showProof p@(ModusPonens a ac) index = 
+   let (aproof, aindex) = (showProof a index) in
+   let (acproof, acindex) = (showProof ac aindex) in
+   (aproof ++ "\n" ++ acproof ++ "\n" ++ (show acindex) ++ ".  " ++ (show (proofStatement p)) ++ " (modus ponens " ++ (show (aindex - 1)) ++ " and " ++ (show (acindex - 1)) ++ ")", acindex + 1)
+
 instance Show(ProofTree) where
-    show (Axiom ax) = (show ax) ++ " (axiom)"
-    show (Hypothesis hypo) = (show hypo) ++ " (hypothesis)"
-    show p@(ModusPonens a ac) = (show a) ++ "\n" ++ (show ac) ++ "\n" ++ (show (proofStatement p)) ++ " (modus ponens)"
+   show p = let (str, _) = showProof p 1 in str
 
 
 data Proof = Proof [Expression] ProofTree -- Hypothesis list and the proof
