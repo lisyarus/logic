@@ -8,7 +8,7 @@ do_main str =
     let expression = parse str
         variables = getVariables expression in
     if foldl (&&) True $ map (calculate expression) (generateAllVariants variables) then
-        "Need a proof of this..."
+        show $ prove expression
     else
         error "The formula is not logically valid!"
 

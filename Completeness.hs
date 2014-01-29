@@ -120,7 +120,16 @@ processVariable expr valueList (var:varTail) =
    let proofOf b = processVariable expr (VariableValue var b : valueList) varTail in
    let proofTrue = proofOf True in
    let proofFalse = proofOf False in
-   undefined
+   let v = Variable var in
+   ModusPonens
+      (excludedMiddle v)
+      (ModusPonens
+         (removeHypothesis (Negation v) proofFalse)
+         (ModusPonens
+            (removeHypothesis v proofTrue)
+            (axiom8 v (Negation v) expr)
+         )
+      )
 
 prove :: Expression -> ProofTree
 prove expr = simplifyProof [] $ processVariable expr [] (getVariables expr)
