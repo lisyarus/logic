@@ -34,3 +34,8 @@ deduction p@(Proof [] _) = p
 deduction (Proof (hypo : hypoTail) tree) = 
    case deduction (Proof hypoTail tree) of
       Proof _ tree -> Proof [] (simplifyProof [] (removeHypothesis hypo tree)) 
+
+selfImplicationProof :: Expression -> ProofTree
+selfImplicationProof expr =
+   case deduction (Proof [expr] (Hypothesis expr)) of
+      Proof _ tree -> tree
