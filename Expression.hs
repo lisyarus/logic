@@ -61,6 +61,7 @@ parseImplication tokenList =
     where
     parseTerm :: TokenList -> ParseState
     parseTerm ((name@(c:nameTail)):tail) | (isAlphaNum c) = ParseState (Variable name) tail
+    parseTerm ("!":name@(c:_):tail) | (isAlphaNum c) = ParseState (Negation (Variable name)) tail
     parseTerm ("!":tail) = let res = parseImplication tail in ParseState (Negation (stateExpression res)) (stateTokenList res)
     parseTerm ("(":tail) = case res of
         ParseState expr (")":tail1) -> ParseState expr tail1
