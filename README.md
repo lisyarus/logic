@@ -2,3 +2,5 @@ Deduction theorem and propositional logic completeness proofs translated into Ha
 
 Deduction receives a proof on the stdin and puts a similar proof without hypothesis using the deduction theorem.
 The proof must be in the form as in the example files.
+
+Completeness receives a statement on stdin and proves it, provided it is true.
