@@ -127,6 +127,13 @@ isAxiom (Implication (Negation (Negation a1)) a2) = (a1 == a2)
 isAxiom (Implication a1 (Implication b1 a2)) = (a1 == a2)
 isAxiom _ = False
 
+axiom1 a b = Axiom $ Implication a $ Implication b a
+axiom9 a b = Axiom $ Implication (Implication a b) (Implication (Implication a (Negation b)) (Negation a))
+axiom10 a = Axiom $ Implication (Negation $ Negation a) a
+
+-- proves that a -> b (assuming b is true)
+truthImplication a b = ModusPonens (Hypothesis b) (axiom1 b a)
+
 simplifyProof :: [Expression] -> ProofTree -> ProofTree
 simplifyProof hypoList proofTree =
     let statement = proofStatement proofTree in
