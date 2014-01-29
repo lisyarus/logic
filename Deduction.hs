@@ -30,4 +30,7 @@ removeHypothesis hypo (ModusPonens a ac) =
 
 deduction :: Proof -> Proof
 deduction p@(Proof [] _) = p
-deduction (Proof (hypo : hypoTail) tree) = deduction (Proof hypoTail (simplifyProof hypoTail (removeHypothesis hypo tree)))
+-- deduction (Proof (hypo : hypoTail) tree) = deduction (Proof hypoTail (simplifyProof hypoTail (removeHypothesis hypo tree)))
+deduction (Proof (hypo : hypoTail) tree) = 
+   case deduction (Proof hypoTail tree) of
+      Proof _ tree -> Proof [] (simplifyProof [] (removeHypothesis hypo tree)) 
