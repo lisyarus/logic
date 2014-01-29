@@ -36,6 +36,4 @@ deduction (Proof (hypo : hypoTail) tree) =
       Proof _ tree -> Proof [] (simplifyProof [] (removeHypothesis hypo tree)) 
 
 selfImplicationProof :: Expression -> ProofTree
-selfImplicationProof expr =
-   case deduction (Proof [expr] (Hypothesis expr)) of
-      Proof _ tree -> tree
+selfImplicationProof expr = getProofTree $  deduction $ Proof [expr] $ Hypothesis expr

@@ -95,6 +95,10 @@ proofStatement (ModusPonens a ac) =
         Implication b c -> if (aSt == b) then c else error "bad modus ponens"
         _ -> error "bad modus ponens"
 
+getProofTree proof =
+   case proof of
+      Proof _ tree -> tree
+
 instance Show(ProofTree) where
     show (Axiom ax) = (show ax) ++ " (axiom)"
     show (Hypothesis hypo) = (show hypo) ++ " (hypothesis)"
