@@ -92,8 +92,10 @@ proofStatement (ModusPonens a ac) =
     let aSt = proofStatement a
         acSt = proofStatement ac in
     case acSt of
-        Implication b c -> if (aSt == b) then c else error "bad modus ponens"
-        _ -> error "bad modus ponens"
+        Implication b c -> if (aSt == b) then c else badModusPonens a ac
+        _ -> badModusPonens a ac
+    where
+        badModusPonens a ac = error ("bad modus ponens from " ++ (show $ proofStatement a) ++ " and " ++ (show $ proofStatement ac))
 
 getProofTree proof =
    case proof of
