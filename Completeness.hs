@@ -85,6 +85,7 @@ proveVariant (Negation (Implication a b)) varlist =
    else
       proveVariantError
 
+-- Proves that (a -> b) -> (!b -> !a)
 contraposition a b =
    removeHypothesis (Implication a b) $
    removeHypothesis (Negation b) $
@@ -94,6 +95,24 @@ contraposition a b =
          (Hypothesis (Implication a b))
          (axiom9 a b)
       )
+
+-- Proves that (a | !a)
+excludedMiddle a =
+   ModusPonens
+      (ModusPonens
+         (ModusPonens
+            (axiom7 a (Negation a))
+            (contraposition (Negation a) (Disjunction a (Negation a)))
+         )
+         (ModusPonens
+            (ModusPonens
+               (axiom6 a (Negation a))
+               (contraposition a (Disjunction a (Negation a)))
+            )
+            (axiom9 (Negation (Disjunction a (Negation a))) (Negation a))
+         )
+      )
+      (axiom10 (Disjunction a (Negation a)))
 
 processVariable :: Expression -> [VariableValue] -> [String] -> ProofTree
 processVariable expr valueList [] = proveVariant expr valueList
