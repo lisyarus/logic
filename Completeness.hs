@@ -85,8 +85,23 @@ proveVariant (Negation (Implication a b)) varlist =
    else
       proveVariantError
 
+contraposition a b =
+   removeHypothesis (Implication a b) $
+   removeHypothesis (Negation b) $
+   ModusPonens
+      (truthImplication a (Negation b))
+      (ModusPonens
+         (Hypothesis (Implication a b))
+         (axiom9 a b)
+      )
+
 processVariable :: Expression -> [VariableValue] -> [String] -> ProofTree
 processVariable expr valueList [] = proveVariant expr valueList
+processVariable expr valueList (var:varTail) =
+   let proofOf b = processVariable expr (VariableValue var b : valueList) varTail in
+   let proofTrue = proofOf True in
+   let proofFalse = proofOf False in
+   undefined
 
 prove :: Expression -> ProofTree
-prove = undefined
+prove expr = simplifyProof [] $ processVariable expr [] (getVariables expr)

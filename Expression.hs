@@ -128,6 +128,7 @@ isAxiom (Implication a1 (Implication b1 a2)) = (a1 == a2)
 isAxiom _ = False
 
 axiom1 a b = Axiom $ Implication a $ Implication b a
+axiom8 a b c = Axiom $ Implication (Implication a c) $ Implication (Implication b c) $ Implication (Disjunction a b) c
 axiom9 a b = Axiom $ Implication (Implication a b) (Implication (Implication a (Negation b)) (Negation a))
 axiom10 a = Axiom $ Implication (Negation $ Negation a) a
 
