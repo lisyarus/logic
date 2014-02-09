@@ -30,3 +30,14 @@ deduction (Proof (hypo : hypoTail) tree) =
 
 selfImplicationProof :: Expression -> ProofTree
 selfImplicationProof expr = getProofTree $  deduction $ Proof [expr] $ Hypothesis expr
+
+-- proves that a -> !!a
+doubleNegationProof :: Expression -> ProofTree
+doubleNegationProof a = removeHypothesis a
+   (ModusPonens
+      (selfImplicationProof $ Negation a)
+      (ModusPonens
+         (truthImplication (Negation a) a)
+         (axiom9 (Negation a) a)
+      )
+   )

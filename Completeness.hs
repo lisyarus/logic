@@ -56,14 +56,25 @@ proveVariant x@(Negation (Variable name)) varlist =
    else
       proveVariantError
 
+proveVariant x@(Negation (Negation y)) varlist = 
+   if calculate y varlist then
+      ModusPonens
+         (proveVariant y varlist)
+         (doubleNegationProof y)
+   else
+      proveVariantError
+
 proveVariant (Implication a b) varlist =
    if calculate b varlist then
-      ModusPonens (Hypothesis b) (axiom1 b a)
+      ModusPonens (proveVariant b varlist) (axiom1 b a)
    else if not $ calculate a varlist then
       removeHypothesis a
       (ModusPonens
          (ModusPonens
-            (truthImplication (Negation b) (Negation a))
+            (ModusPonens
+               (proveVariant (Negation a) varlist)
+               (axiom1 (Negation a) (Negation b))
+            )
             (ModusPonens
                (truthImplication (Negation b) a)
                (axiom9 (Negation b) a)
@@ -77,9 +88,18 @@ proveVariant (Implication a b) varlist =
 proveVariant (Negation (Implication a b)) varlist =
    if (calculate a varlist) && (not (calculate b varlist)) then
       ModusPonens
-         (truthImplication (Implication a b) (Negation b))
          (ModusPonens
-            (removeHypothesis (Implication a b) (ModusPonens (Hypothesis a) (Hypothesis (Implication a b))))
+            (proveVariant (Negation b) varlist)
+            (axiom1 (Negation b) (Implication a b))
+         )
+         (ModusPonens
+            (ModusPonens
+               (proveVariant a varlist)
+               (removeHypothesis
+                  a
+                  (removeHypothesis (Implication a b) (ModusPonens (Hypothesis a) (Hypothesis (Implication a b))))
+               )
+            )
             (axiom9 (Implication a b) b)
          )
    else
