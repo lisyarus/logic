@@ -6,14 +6,7 @@ removeHypothesis :: Expression -> ProofTree -> ProofTree
 removeHypothesis hypo (Axiom ax) = ModusPonens (Axiom ax) (Axiom (Implication ax (Implication hypo ax)))
 removeHypothesis hypo (Hypothesis h) =
     if (h == hypo) then
-        let temp1 = Implication h (Implication h h) -- (A -> A -> A)
-            temp2 = Implication h (Implication (Implication h h) h) in -- (A -> (A -> A) -> A)
-        ModusPonens
-            (Axiom temp2)
-            (ModusPonens
-                (Axiom temp1)
-                (Axiom (Implication temp1 (Implication temp2 (Implication h h))))
-            )
+      selfImplication h
     else
         ModusPonens (Hypothesis h) (Axiom (Implication h (Implication hypo h)))
 removeHypothesis hypo (ModusPonens a ac) =

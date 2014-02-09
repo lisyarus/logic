@@ -142,6 +142,16 @@ axiom10 a = Axiom $ Implication (Negation $ Negation a) a
 -- proves that a -> b (assuming b is true)
 truthImplication a b = ModusPonens (Hypothesis b) (axiom1 b a)
 
+selfImplication a = 
+  let temp1 = proofStatement $ axiom1 a a -- (A -> A -> A)
+      temp2 = proofStatement $ axiom1 a (Implication a a) in -- (A -> (A -> A) -> A)
+  ModusPonens
+      (Axiom temp2)
+      (ModusPonens
+          (Axiom temp1)
+          (Axiom (Implication temp1 (Implication temp2 (Implication a a))))
+      )
+
 simplifyProof :: [Expression] -> ProofTree -> ProofTree
 simplifyProof hypoList proofTree =
     let statement = proofStatement proofTree in
@@ -150,6 +160,9 @@ simplifyProof hypoList proofTree =
     else if (elem statement hypoList) then
         (Hypothesis statement)
     else
-        case proofTree of
-            (ModusPonens a ac) -> ModusPonens (simplifyProof hypoList a) (simplifyProof hypoList ac)
-            x -> x
+      simplifyProofTree statement proofTree
+   where
+      simplifyProofTree :: Expression -> ProofTree -> ProofTree
+      simplifyProofTree (Implication a1 a2) _ | a1 == a2 = selfImplication a1
+      simplifyProofTree _ (ModusPonens a ac) = ModusPonens (simplifyProof hypoList a) (simplifyProof hypoList ac)
+      simplifyProofTree _ tree = tree
