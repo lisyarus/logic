@@ -122,15 +122,31 @@ instance Show(Proof) where
             showList [] = ""
 
 isAxiom :: Expression -> Bool
-isAxiom (Implication (Implication a1 b1) (Implication (Implication a2 (Implication b2 c1)) (Implication a3 c2))) = (a1 == a2) && (a2 == a3) && (b1 == b2) && (c1 == c2)
-isAxiom (Implication a1 (Implication b1 (Conjunction a2 b2))) = (a1 == a2) && (b1 == b2)
-isAxiom (Implication (Conjunction a1 b1) ab) = (a1 == ab) || (b1 == ab)
-isAxiom (Implication ab (Disjunction a1 b1)) = (a1 == ab) || (b1 == ab)
-isAxiom (Implication (Implication a1 c1) (Implication (Implication b1 c2) (Implication (Disjunction a2 b2) c3))) = (a1 == a2) && (b1 == b2) && (c1 == c2) && (c2 == c3)
-isAxiom (Implication (Implication a1 b1) (Implication (Implication a2 (Negation b2)) (Negation a3))) = (a1 == a2) && (a2 == a3) && (b1 == b2)
-isAxiom (Implication (Negation (Negation a1)) a2) = (a1 == a2)
-isAxiom (Implication a1 (Implication b1 a2)) = (a1 == a2)
-isAxiom _ = False
+isAxiom e = (isAxiom1 e) || (isAxiom2 e) || (isAxiom3 e) || (isAxiom4 e) || (isAxiom5 e) || (isAxiom6 e) || (isAxiom7 e) || (isAxiom8 e)
+
+isAxiom1 (Implication a1 (Implication b1 a2)) = (a1 == a2)
+isAxiom1 _ = False
+
+isAxiom2 (Implication (Implication a1 b1) (Implication (Implication a2 (Implication b2 c1)) (Implication a3 c2))) = (a1 == a2) && (a2 == a3) && (b1 == b2) && (c1 == c2)
+isAxiom2 _ = False
+
+isAxiom3 (Implication a1 (Implication b1 (Conjunction a2 b2))) = (a1 == a2) && (b1 == b2)
+isAxiom3 _ = False
+
+isAxiom4 (Implication (Conjunction a1 b1) ab) = (a1 == ab) || (b1 == ab)
+isAxiom4 _ = False
+
+isAxiom5 (Implication ab (Disjunction a1 b1)) = (a1 == ab) || (b1 == ab)
+isAxiom5 _ = False
+
+isAxiom6 (Implication (Implication a1 c1) (Implication (Implication b1 c2) (Implication (Disjunction a2 b2) c3))) = (a1 == a2) && (b1 == b2) && (c1 == c2) && (c2 == c3)
+isAxiom6 _ = False
+
+isAxiom7 (Implication (Implication a1 b1) (Implication (Implication a2 (Negation b2)) (Negation a3))) = (a1 == a2) && (a2 == a3) && (b1 == b2)
+isAxiom7 _ = False
+
+isAxiom8 (Implication (Negation (Negation a1)) a2) = (a1 == a2)
+isAxiom8 _ = False
 
 axiom1 a b = Axiom $ Implication a $ Implication b a
 axiom6 a b = Axiom $ Implication a $ Disjunction a b
